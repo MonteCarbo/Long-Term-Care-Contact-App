@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long-Term Care Defense Kit</title>
+    <!-- Using Tailwind CSS for clean, professional, and accessible base styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styling for specific elements */
+        body {
+            background-color: #f3f4f6; /* Light gray background for the screen */
+            color: #111827; /* Dark gray/black for high contrast readability */
+        }
+        
+        .worksheet-container {
+            background-color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            max-width: 8.5in; /* Standard letter width for accurate screen preview */
+            margin: 0 auto;
+            min-height: 11in;
+            display: none; /* Hidden until state is selected */
+        }
+
+        .wallet-card {
+            position: relative;
+            border: 2px dashed #4b5563;
+            width: 4in; /* Wider to accommodate text, meant to be folded */
+            padding: 1rem;
+            margin-top: 1.5rem;
+            background-color: #ffffff;
+        }
+
+        .wallet-card::before {
+            content: "✂️ Cut along dashed line";
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: #ffffff;
+            padding: 0 5px;
+            font-size: 0.75rem;
+            color: #4b5563;
+            font-weight: bold;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            @page {
+                size: letter portrait;
+                margin: 0.25in; /* Ultra-tight margins to maximize space */
+            }
+            html, body {
+                background-color: #ffffff !important;
+                margin: 0;
+                padding: 0;
+                height: auto !important; 
+                min-height: auto !important; 
+                overflow: visible !important;
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+                font-size: 12px !important; /* CRUCIAL: Scales all Tailwind 'rem' utilities down by 25% */
+            }
+            /* Hide the interactive UI during print */
+            .no-print {
+                display: none !important;
+            }
+            /* Reset container for physical paper */
+            .worksheet-container {
+                display: block !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important; 
+                width: 100% !important;
+                max-width: none !important;
+                min-height: auto !important;
+            }
+            /* Aggressively force tight spacing to guarantee 1-page fit */
+            .mb-8 { margin-bottom: 0.5rem !important; }
+            .mb-6 { margin-bottom: 0.5rem !important; }
+            .pb-4 { padding-bottom: 0.5rem !important; }
+            .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem !important; }
+            .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.25rem !important; }
+            
+            /* Disable flex centering during print to prevent WebKit crashes */
+            .flex.justify-center {
+                display: block !important;
+            }
+            
+            /* Prevent breaking inside important elements and tighten card */
+            .wallet-card { 
+                page-break-inside: avoid; 
+                break-inside: avoid; 
+                margin-top: 1.5rem !important; 
+                padding: 0.5rem !important;
+                margin-left: auto !important; 
+                margin-right: auto !important; 
+            }
+            .space-y-4 > div {
+                page-break-inside: avoid; 
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-12">
+
+    <!-- INTERACTIVE UI SECTION (Hidden on Print) -->
+    <header class="bg-[#7eb7e4] text-gray-900 py-8 px-4 shadow-md no-print">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
+            <img src="Caregiving Clarified Logo.png" alt="Caregiving Clarified Logo" class="h-16 md:h-20 object-contain" onerror="this.style.display='none'">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold mb-2">Long-Term Care Defense Kit</h1>
+                <p class="text-gray-800 text-lg font-medium">Generate your state-specific emergency contact worksheet and admission defense card.</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 mt-8 no-print">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
+            <label for="state-select" class="block text-lg font-semibold text-gray-800 mb-3">1. Select Your State</label>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <select id="state-select" class="w-full sm:w-64 bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-md focus:ring-[#7eb7e4] focus:border-[#7eb7e4] block p-2.5">
+                    <option value="" disabled selected>Choose a state...</option>
+                    <option value="AL">Alabama</option>
+                    <option value="AK">Alaska</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="AR">Arkansas</option>
+                    <option value="CA">California</option>
+                    <option value="CO">Colorado</option>
+                    <option value="CT">Connecticut</option>
+                    <option value="DE">Delaware</option>
+                    <option value="DC">District of Columbia</option>
+                    <option value="FL">Florida</option>
+                    <option value="GA">Georgia</option>
+                    <option value="GU">Guam</option>
+                    <option value="HI">Hawaii</option>
+                    <option value="ID">Idaho</option>
+                    <option value="IL">Illinois</option>
+                    <option value="IN">Indiana</option>
+                    <option value="IA">Iowa</option>
+                    <option value="KS">Kansas</option>
+                    <option value="KY">Kentucky</option>
+                    <option value="LA">Louisiana</option>
+                    <option value="ME">Maine</option>
+                    <option value="MD">Maryland</option>
+                    <option value="MA">Massachusetts</option>
+                    <option value="MI">Michigan</option>
+                    <option value="MN">Minnesota</option>
+                    <option value="MS">Mississippi</option>
+                    <option value="MO">Missouri</option>
+                    <option value="MT">Montana</option>
+                    <option value="NE">Nebraska</option>
+                    <option value="NV">Nevada</option>
+                    <option value="NH">New Hampshire</option>
+                    <option value="NJ">New Jersey</option>
+                    <option value="NM">New Mexico</option>
+                    <option value="NY">New York</option>
+                    <option value="NC">North Carolina</option>
+                    <option value="ND">North Dakota</option>
+                    <option value="OH">Ohio</option>
+                    <option value="OK">Oklahoma</option>
+                    <option value="OR">Oregon</option>
+                    <option value="PA">Pennsylvania</option>
+                    <option value="PR">Puerto Rico</option>
+                    <option value="RI">Rhode Island</option>
+                    <option value="SC">South Carolina</option>
+                    <option value="SD">South Dakota</option>
+                    <option value="TN">Tennessee</option>
+                    <option value="TX">Texas</option>
+                    <option value="UT">Utah</option>
+                    <option value="VT">Vermont</option>
+                    <option value="VA">Virginia</option>
+                    <option value="WA">Washington</option>
+                    <option value="WV">West Virginia</option>
+                    <option value="WI">Wisconsin</option>
+                    <option value="WY">Wyoming</option>
+                </select>
+
+                <button id="print-btn" onclick="window.print()" class="hidden bg-[#f15629] hover:bg-[#d94a20] text-white font-bold py-2.5 px-6 rounded shadow transition duration-150 ease-in-out flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Print My Contacts Sheet and Card
+                </button>
+            </div>
+            <p id="instruction-text" class="text-gray-500 text-sm mt-3">Select a state above to generate your customized defense kit.</p>
+        </div>
+    </main>
+
+    <!-- PRINTABLE WORKSHEET SECTION -->
+    <div id="worksheet" class="worksheet-container p-6 md:p-10">
+        
+        <!-- Document Header -->
+        <div class="border-b-4 border-[#7eb7e4] pb-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-3xl font-black text-gray-900 uppercase tracking-tight">Emergency Legal Action Plan</h2>
+                <p class="text-lg font-semibold text-[#f15629] mt-1">Prepared for Long-Term Care & Nursing Home Admissions</p>
+                <p class="text-sm font-bold text-gray-600 mt-2">STATE JURISDICTION: <span id="display-state" class="text-[#f15629] underline uppercase">[STATE]</span></p>
+            </div>
+            <img src="Caregiving Clarified Logo.png" alt="Caregiving Clarified Logo" class="h-12 object-contain" onerror="this.style.display='none'">
+        </div>
+
+        <!-- TOP HALF: Emergency Crisis Contacts -->
+        <h3 class="text-xl font-bold text-gray-800 mb-3 bg-[#7eb7e4]/20 border-l-4 border-[#7eb7e4] py-2 px-3 rounded-r">Part 1: Emergency Crisis Contacts</h3>
+        <div class="space-y-4 mb-8 pl-2">
+            
+            <!-- Contact 1 -->
+            <div>
+                <h4 class="text-lg font-bold text-gray-900">1. State Long-Term Care Ombudsman</h4>
+                <p class="text-xl font-bold text-[#f15629] mt-1 mb-1" id="phone-ombudsman">[Dynamic Phone Number]</p>
+                <p class="text-gray-700 text-sm leading-relaxed">
+                    An Ombudsman is your biggest advocate. You should call them to halt illegal evictions, fight Medicaid discrimination, or resolve facility disputes.
+                </p>
+            </div>
+
+            <!-- Contact 2 -->
+            <div>
+                <h4 class="text-lg font-bold text-gray-900">2. State Health Department / Licensing</h4>
+                <p class="text-xl font-bold text-[#f15629] mt-1 mb-1" id="phone-health">[Dynamic Phone Number]</p>
+                <p class="text-gray-700 text-sm leading-relaxed">
+                    This agency serves as the regulatory body for nursing facilities. You should call them to file a formal grievance if they try to force a "duration of stay" private-pay agreement.
+                </p>
+            </div>
+
+            <!-- Contact 3 -->
+            <div>
+                <h4 class="text-lg font-bold text-gray-900">3. Local Legal Aid or Elder Law Attorney</h4>
+                <p class="text-xl font-bold text-[#f15629] mt-1 mb-1">www.lsc.gov <span class="text-gray-400 mx-2">|</span> www.naela.org</p>
+                <p class="text-gray-700 text-sm leading-relaxed">
+                    You can call these organizations to appeal a discharge or review Assisted Living contracts, which bypass federal nursing home laws.
+                </p>
+            </div>
+
+            <!-- Contact 4 -->
+            <div>
+                <h4 class="text-lg font-bold text-gray-900">4. Consumer Financial Protection Bureau (CFPB)</h4>
+                <p class="text-xl font-bold text-[#f15629] mt-1 mb-1">(855) 411-2372 <span class="text-gray-400 mx-2">|</span> consumerfinance.gov</p>
+                <p class="text-gray-700 text-sm leading-relaxed">
+                    You should report the facility to the CFPB if a debt collector illegally comes after your personal money for a resident's bill.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- BOTTOM HALF: The Wallet Card -->
+        <h3 class="text-xl font-bold text-gray-800 mb-3 bg-[#7eb7e4]/20 border-l-4 border-[#7eb7e4] py-2 px-3 rounded-r">Part 2: Keep This Card in Your Wallet</h3>
+        <p class="text-sm text-gray-600 mb-4 italic pl-2">Cut out the card below and carry it with you. Refer to it BEFORE signing any admission paperwork.</p>
+        
+        <div class="flex justify-center">
+            <div class="wallet-card border-t-4 border-t-[#f15629]">
+                <h4 class="text-center font-black text-gray-900 uppercase tracking-wide border-b border-gray-300 pb-2 mb-2 text-sm">Admission Desk Defenses</h4>
+                
+                <!-- NEW EMERGENCY NUMBERS SECTION -->
+                <div class="mb-2 pb-2 border-b border-gray-200 text-xs space-y-1">
+                    <p><strong>Ombudsman:</strong> <span id="card-ombudsman" class="text-[#f15629] font-bold">[Select State]</span></p>
+                    <p><strong>Health Dept:</strong> <span id="card-health" class="text-[#f15629] font-bold">[Select State]</span></p>
+                    <p><strong>Legal Aid:</strong> <span class="text-[#f15629] font-bold">www.lsc.gov | www.naela.org</span></p>
+                    <p><strong>CFPB:</strong> <span class="text-[#f15629] font-bold">(855) 411-2372</span></p>
+                </div>
+
+                <ul class="space-y-2 text-xs text-gray-800">
+                    <li>
+                        <strong class="text-[#f15629] block uppercase">1. Sign as POA or Manager.</strong>
+                        NEVER sign with just your printed name. Legally separate yourself from the debt by writing your capacity directly next to your signature: <em>"Jane Doe, as Power of Attorney for John Doe only."</em> If you are not the Power of Attorney, you can append titles like "as Agent", "as Representative", or "as Health Care Proxy" to your signature to legally separate yourself from the debt.
+                    </li>
+                    <li>
+                        <strong class="text-[#f15629] block uppercase">2. Cross out the contract.</strong>
+                        Before signing, strike a thick pen line through the words "Guarantor," "Joint Liability," or "Responsible Party." Make them initial your cross-outs.
+                    </li>
+                    <li>
+                        <strong class="text-[#f15629] block uppercase">3. 30-Day Arbitration Opt-Out.</strong>
+                        You have 30 days to cancel a binding arbitration agreement without penalty, even if signed. Send a formal letter via certified mail.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- APPLICATION LOGIC -->
+    <script>
+        /**
+         * State Contact Database
+         * * DEVELOPER NOTE: 
+         * To add the remaining 46 states, simply add new key-value pairs 
+         * to this object using the standard 2-letter state abbreviation as the key.
+         * Format: "XX": { name: "Full State Name", ombudsman: "Phone", health: "Phone" }
+         */
+        const stateData = {
+            "AL": { name: "Alabama", ombudsman: "1-877-425-2243", health: "334-206-5366 (Bureau of Health Providers Standards)" },
+            "AK": { name: "Alaska", ombudsman: "1-800-730-6393", health: "907-334-2483 (Health Facilities Licensing)" },
+            "AZ": { name: "Arizona", ombudsman: "(602) 542-6454", health: "602-364-3030 (Dept of Health Services)" },
+            "AR": { name: "Arkansas", ombudsman: "1-800-582-4887", health: "1-800-582-4887 (Office of Long-Term Care Investigations)" },
+            "CA": { name: "California", ombudsman: "1-800-231-4024", health: "800-228-5234 (South) / 866-247-9100 (North)" },
+            "CO": { name: "Colorado", ombudsman: "1-800-288-1376", health: "1-800-842-8826 (Health Facilities Complaint Line)" },
+            "CT": { name: "Connecticut", ombudsman: "1-866-388-1888", health: "1-866-388-1888 (Nursing Home Abuse & LTC Ombudsman)" },
+            "DE": { name: "Delaware", ombudsman: "1-855-773-1002", health: "1-800-942-7373 (Health Care Quality Complaints)" },
+            "DC": { name: "District of Columbia", ombudsman: "(202) 434-2140", health: "202-724-8800 (Health Regulation & Licensing)" },
+            "FL": { name: "Florida", ombudsman: "1-888-831-0404", health: "888-419-3456 (AHCA Regulatory Line)" },
+            "GA": { name: "Georgia", ombudsman: "1-866-552-4464", health: "404-657-5700 (DCH Healthcare Facility Regulation)" },
+            "GU": { name: "Guam", ombudsman: "(671) 735-7415", health: "671-735-7407 (Public Health & Social Services)" },
+            "HI": { name: "Hawaii", ombudsman: "1-888-229-2231", health: "808-692-7420 (Medicare/Medicaid Facility Complaints)" },
+            "ID": { name: "Idaho", ombudsman: "1-877-471-2777", health: "1-800-345-1453 (Dept of Health & Welfare)" },
+            "IL": { name: "Illinois", ombudsman: "1-800-252-8966", health: "1-800-252-4343 (IDPH Nursing Home Complaint Hotline)" },
+            "IN": { name: "Indiana", ombudsman: "1-800-622-4484", health: "1-800-246-8909 (Acute and Continuing Care Complaints)" },
+            "IA": { name: "Iowa", ombudsman: "1-866-236-1430", health: "1-877-686-0027 (Dept of Inspections and Appeals)" },
+            "KS": { name: "Kansas", ombudsman: "1-877-662-8362", health: "1-800-842-0078 (KDHE Complaint Hotline)" },
+            "KY": { name: "Kentucky", ombudsman: "1-800-372-2991", health: "1-877-597-2331 (OIG Abuse Hotline)" },
+            "LA": { name: "Louisiana", ombudsman: "1-800-259-4990", health: "1-800-327-3419 (Health Facility Complaint)" },
+            "ME": { name: "Maine", ombudsman: "1-800-499-0229", health: "1-800-621-8222 (DHHS Safety Reporting)" },
+            "MD": { name: "Maryland", ombudsman: "1-800-243-3425", health: "410-402-8015 (Provider Complaint Line)" },
+            "MA": { name: "Massachusetts", ombudsman: "1-800-243-4636", health: "1-800-462-5540 (Health Facility Complaint)" },
+            "MI": { name: "Michigan", ombudsman: "1-866-485-9393", health: "1-800-882-6006 (LARA BSC Complaint)" },
+            "MN": { name: "Minnesota", ombudsman: "1-800-657-3591", health: "1-844-880-1574 (Health Regulation Complaint)" },
+            "MS": { name: "Mississippi", ombudsman: "1-888-844-0041", health: "1-800-227-7308 (Health Facility Complaint Hotline)" },
+            "MO": { name: "Missouri", ombudsman: "1-800-309-3282", health: "1-800-392-0210 (Abuse/Safety Hotline)" },
+            "MT": { name: "Montana", ombudsman: "1-800-332-2272", health: "406-444-4077 (DPHHS Quality Assurance Division)" },
+            "NE": { name: "Nebraska", ombudsman: "1-800-942-7830", health: "402-471-0316 (Health Care Facility Complaint Intake)" },
+            "NV": { name: "Nevada", ombudsman: "1-888-282-1155", health: "775-684-1030 (North) / 775-486-6515 (South)" },
+            "NH": { name: "New Hampshire", ombudsman: "1-800-442-5640", health: "1-800-621-6232 (Health Facilities Administration)" },
+            "NJ": { name: "New Jersey", ombudsman: "1-877-582-6995", health: "1-800-792-9770 (Health Facility Complaints)" },
+            "NM": { name: "New Mexico", ombudsman: "1-866-451-2901", health: "1-800-752-8649 (Health Facility Complaints Hotline)" },
+            "NY": { name: "New York", ombudsman: "1-855-582-6769", health: "1-888-201-4563 (Nursing Home Complaint Hotline)" },
+            "NC": { name: "North Carolina", ombudsman: "1-800-662-7030", health: "1-800-624-3004 (Division of Health Service Regulation)" },
+            "ND": { name: "North Dakota", ombudsman: "1-855-462-5465", health: "1-800-545-8256 (Health Facility Concerns)" },
+            "OH": { name: "Ohio", ombudsman: "1-800-282-1206", health: "1-800-342-0553 (Department of Health Complaints)" },
+            "OK": { name: "Oklahoma", ombudsman: "1-800-211-2116", health: "1-800-747-8419 (Nursing Home Complaint Hotline)" },
+            "OR": { name: "Oregon", ombudsman: "1-800-522-2602", health: "1-877-280-4555 (Nursing Facility Complaint Unit)" },
+            "PA": { name: "Pennsylvania", ombudsman: "1-800-753-8827", health: "1-800-254-5164 (Facilities Licensing & Complaints)" },
+            "PR": { name: "Puerto Rico", ombudsman: "1-800-981-0056", health: "787-782-0120 (SARAFS Licensing)" },
+            "RI": { name: "Rhode Island", ombudsman: "1-888-351-0808", health: "401-222-5200 (DOH Complaints)" },
+            "SC": { name: "South Carolina", ombudsman: "1-800-868-9095", health: "803-545-4370 (Facility Licensing Complaints)" },
+            "SD": { name: "South Dakota", ombudsman: "1-866-854-5465", health: "1-800-738-2301 (Department of Health Complaints)" },
+            "TN": { name: "Tennessee", ombudsman: "1-877-236-0013", health: "615-741-7221 (HFC Licensure Division)" },
+            "TX": { name: "Texas", ombudsman: "1-800-252-2412", health: "1-800-458-9858 (Complaint and Incident Intake)" },
+            "UT": { name: "Utah", ombudsman: "1-800-371-7897", health: "1-800-999-7339 (Health Facility Licensing Complaints)" },
+            "VT": { name: "Vermont", ombudsman: "1-800-889-2047", health: "1-888-700-5330 (DAIL Division of Licensing & Protection)" },
+            "VA": { name: "Virginia", ombudsman: "1-800-552-3402", health: "1-800-955-1819 (Office of Licensure and Certification)" },
+            "WA": { name: "Washington", ombudsman: "1-800-562-6028", health: "360-236-4700 (HSQA Customer Service)" },
+            "WV": { name: "West Virginia", ombudsman: "1-800-834-0598", health: "304-558-0050 (OHFLAC Complaint)" },
+            "WI": { name: "Wisconsin", ombudsman: "1-800-815-0015", health: "1-800-642-6552 (DHS Complaints)" },
+            "WY": { name: "Wyoming", ombudsman: "1-800-856-4398", health: "307-777-7123 (Facility Complaint Line)" }
+        };
+
+        // DOM Elements
+        const stateSelect = document.getElementById('state-select');
+        const printBtn = document.getElementById('print-btn');
+        const instructionText = document.getElementById('instruction-text');
+        const worksheet = document.getElementById('worksheet');
+        
+        const displayState = document.getElementById('display-state');
+        const phoneOmbudsman = document.getElementById('phone-ombudsman');
+        const phoneHealth = document.getElementById('phone-health');
+        const cardOmbudsman = document.getElementById('card-ombudsman');
+        const cardHealth = document.getElementById('card-health');
+
+        // Handle State Selection
+        stateSelect.addEventListener('change', function(e) {
+            const selectedCode = e.target.value;
+            const data = stateData[selectedCode];
+
+            if (data) {
+                // Update Worksheet Content
+                displayState.textContent = data.name;
+                phoneOmbudsman.textContent = data.ombudsman;
+                phoneHealth.textContent = data.health;
+                
+                // Update Wallet Card Content
+                cardOmbudsman.textContent = data.ombudsman;
+                cardHealth.textContent = data.health;
+
+                // Reveal the Print Button & Worksheet
+                printBtn.classList.remove('hidden');
+                worksheet.style.display = 'block';
+                
+                // Update instruction text dynamically
+                instructionText.innerHTML = `<span class="text-green-600 font-semibold">✓ ${data.name} selected.</span> Click the print button to generate your document.`;
+            }
+        });
+    </script>
+</body>
+</html>
